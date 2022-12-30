@@ -1,0 +1,84 @@
+\section{Some problems}\label{sec:some_problems}
+
+\subsection{SAT and variations of it}\label{subsec:problem_sat}
+
+    Let $\varphi$ be a boolean formula. The following problems can be defined for any kind of boolean formula, albeit it is often the case that we consider $\varphi$ to be in CNF form.
+
+    We often denote an assignment of the variables of a formula with the letter $\alpha$.
+
+    \begin{definition}[SAT]\label{def:sat}
+        \[ SAT = \{ \varphi \st \text{there is an assignment } \alpha \text{ s.t. } \varphi(\alpha) = 1 \} \]    
+    \end{definition}
+
+    \begin{definition}[$k$-SAT]\label{def:k_sat}
+        Fix $k$, we consider $\varphi$ to be a CNF boolean formula s.t. each clause contains exactly $k$ literals.
+        \[ k\text{-}SAT = \{ \varphi \st \text{there is an assignment } \alpha \text{ s.t. } \varphi(\alpha) = 1 \} \]  
+    \end{definition}
+
+    
+
+
+\subsection{Problems on graphs}\label{subsec:problem_graphs}
+
+    For the following subsection the letter $G$ will denote a graph.
+
+    \subsubsection{Independent Set}\label{subsubsec:problem_indset}
+        \begin{definition}[Independent Set]\label{def:ind_set}
+            $S \subseteq V(G)$ is an independent set if $\forall x,y \in S$ $\{ x,y \} \not\in E(G)$.
+        \end{definition}
+
+        So we define the decision problem of finding if a graph has an independent set as follows:
+        \[ IndSet = \{ (G,k) \st G  \text{ has an independent set of size } \geq k \} \]
+
+        \begin{theorem}\label{thm:indset_npc}
+            3-SAT $\preduction$ IndSet
+        \end{theorem}
+        
+        Also, it is easy to see that IndSet is in \textbf{NP}, so it is \textbf{NP}-Complete.
+
+
+    \subsubsection{Clique}\label{subsubsec:problem_clique}
+        Let $k$ be an integer.
+        
+        \begin{definition}[Clique]\label{def:clique}
+            \[ Clique = \{ (G,k) \st G \text{ has a clique of size } k \} \]
+        \end{definition}
+
+        Observe that $(G,k) \in Clique \leftrightarrow (\bar{G},k) \in IndSet$. So $Clique$ is \textbf{NP}-Complete.
+
+
+    \subsubsection{Vertex Cover}\label{subsubsec:problem_vertexcover}
+        \begin{definition}[Vertex cover]\label{def:vertcover}
+            $C \subseteq V(G)$ is a vertex cover if $\forall \{ x,y \} \in E(G)$ $x$ or $y$ are in $C$, and $C$ covers all the edges; i.e. each edge of the graph has at least one node in the cover.
+        \end{definition}
+
+        So we define the decision problems as follows:
+        \[ VC = \{ (G,t) \st G \text{ has a vertex cover of size }  \leq t \} \]
+
+        It is known that the complement of an \textit{independent set} is always a \textit{vertex cover}.
+        So we can prove that $IndSet \preduction VC$ via the following mapping: $(G,k) \mapsto (G, \cardinality{V(G)} - k)$.
+        This proves that $VC$ is \textbf{NP}-Complete.
+
+    
+    \subsubsection{Eulerian graph}\label{subsubsec:problem_euleriangraph}
+        \begin{definition}[Eulerian walk]\label{def:eulerian_walk}
+            A walk on a graph is said to be eulerian is it touches all edges exactly once.
+        \end{definition}
+        
+        A graph is said to be \textit{eulerian} if it contains an eulerian walk.
+
+        This problem is actually solvable in polynomial time; i.e. is in \textbf{P}.
+
+        To check if a graph is eulerian we can do as follows.
+        For each vertex calculate $d = indegree - outdegree$; if one of the two following conditions hold then the graph is eulerian:
+        \begin{itemize}
+            \item $d=0$ for each vertex
+            \item one vertex has $d=1$, one vertex has $d=-1$ and all other vertices have $d=0$
+        \end{itemize}
+
+    \subsubsection{Hamiltonian path}\label{subsubsec:problem_hamiltonianpath}
+        \begin{definition}[Hamiltonian path]
+            A walk on a graph is said to be Hamiltonian if it touches all nodes exactly once.
+        \end{definition}
+
+        The statement is similar to the one for Eulerian walks, but this problem is actually in \textbf{NP}.

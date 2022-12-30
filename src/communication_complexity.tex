@@ -1,0 +1,120 @@
+\section{Communication complexity}\label{sec:comm_complexity}
+
+We have two parties, Alice and Bob, that want to compute a function collectively.
+Alice has input $x \in \B^n$ and Bob has input $y \in \B^n$, and together they want to compute a function $f(x,y)$.
+
+How many bits do they have to exchange in order to do so?
+
+We assume that both Alice and Bob have unbounded computational power, in fact we are only interested to study the number of bits shared.
+
+Note that this is not an adversarial scheme. We assume that the channel is secure and Alice and Bob are both trusted.
+There is no reason, for instance, to design private schemes as in other frameworks.
+
+What we want is for Alice and Bob to have a deterministic protocol to compute $f : \B^n \times \B^n \rightarrow \B$.
+Observe that we suppose that both inputs have the same length.
+
+So in the protocol they start exchanging messages until the function is computed.
+At each step $i$, we can think that there is a function $P_i : \B^* \rightarrow \B^*$ that lets us compute the next message.
+
+So the communication, messages-wise, goes as follows:
+\begin{itemize}
+    \item $m_1 = P_1(x)$
+    \item $m_2 = P_2(y, m_1)$
+    \item $m_3 = P_3(x, m_1, m_2)$
+    \item $\vdots$
+    \item $m_t = f(x,y)$
+\end{itemize}
+
+We can say that for $t' > t$ $m_{t'} = ""$; i.e. they stop talking.
+
+\begin{definition}[Cost of a protocol]\label{def:cost_protocol_communication}
+    Let $\Pi$ be a protocol.
+    The cost of $\Pi$ is:
+    \[ C(\Pi) = \max_{x,y} \left( \sum_i \cardinality{m_i} \right) \]
+\end{definition}
+
+\begin{definition}[Communication complexity]
+    The communication complexity of a function $f$ is:
+    \[ C(f) = \min_{\Pi} (C(\Pi)) \]
+\end{definition}
+
+
+\subsection{Lower bound methods}\label{subsec:comm_compl_lower_bounds}
+    We now see three methods used to give lower bounds the communication complexity of functions:
+    \begin{itemize}
+        \item \nameref{subsubsec:fool_set}
+        \item \nameref{subsubsec:tiling}
+        \item \nameref{subsubsec:rank}
+    \end{itemize}
+
+    \subsubsection{Fooling set}\label{subsubsec:fool_set}
+
+        \begin{definition}[Combinatorial rectangle]
+            Let $M$ be a matrix with $\B^n$ columns and $\B^n$ rows.
+
+            $N \subseteq \B^n \times \B^n$ is a combinatorial rectangle iff $\forall (x_1,y_1),(x_2,y_2) \in N$, $(x_1,y_2) \in N$ and $(x_2,y_1) \in N$
+        \end{definition}
+
+        A combinatorial rectangle is a generalization of a geometric rectangle.
+        Given a function $f : \B^n \times \B^n \rightarrow \B$ we represent it as a matrix $M$ (the codomain of the function is actually not important, but let us stick with $\B$ which is usually what we care about).
+        Let us pick a geometric rectangle. We can permute both the columns and the rows of $M$, and the resulting matrix would be equivalent to the original one, meaning that it still represents the same function,
+        except that the results are represent in a different order. Once we have applied the permutation, the original geometric rectangle that we had picked got split up into smaller rectangles.
+        These smaller rectnagles are the combinatorial rectangle.
+
+        \begin{definition}[Fooling set]\label{def:fooling_set}
+            A set of pairs $(x_1,y_1), \dots, (x_t, y_t)$ is a \textit{fooling set} for a function $f$ if:
+            \begin{itemize}
+                \item $\forall i$ $f(x_i, y_i) = b$
+                \item $\forall i \neq j$ $f(x_i, y_j) \neq b$ or $f(x_j, y_i) \neq b$
+            \end{itemize}
+        \end{definition}
+
+        \begin{theorem}\label{thm:fool_set}
+            If a function $f$ has a fooling set of $t$ pairs, then $C(f) \geq \log_2(t)$.
+        \end{theorem}
+
+
+    \subsubsection{Tiling}\label{subsubsec:tiling}
+        
+        \begin{definition}[Tailing]\label{def:tailing}
+            Let $M$ be the matrix of a function $f$.
+            A \textbf{tailing} of $M$ is a partition of $M$ in monochromatic rectangles.
+
+            \[ \chi(f) = \min(\text{\# rectangles in a tailing of } M) \]
+        \end{definition}
+
+        \begin{theorem}\label{thm:tailing_chi}
+            Let $f$ be a function.
+            \[ \log(\chi(f)) \leq C(f) \leq \log^2(\chi(f)) \]
+        \end{theorem}
+
+    \subsubsection{Rank}\label{subsubsec:rank}
+
+        \begin{definition}[Rank]\label{def:rank}
+            Let $M_f = \sum_i B_i$ for some function $f$, where, for each $i$, $B_i$ is a matrix of rank $1$.
+            \[ rank(M_f) = \min_t : M_f = \sum_{i = 1}^t B_i \]
+        \end{definition}
+
+
+\subsection{Randomized communication complexity}\label{subsec:rand_comm_compl}
+    
+    How do we randomize communication?
+    \begin{itemize}
+        \item each party flips random coins (private coin model)
+        \item each party flips random coins in public (public coin model)
+        \item distributions over $(x,y)$ (i.e. the inputs)
+    \end{itemize}
+
+    \def\piprotocol{\Pi(R,R_A,R_B,x,y)}
+    Let $\Pi$ be a random protocol. Its signature is $\piprotocol$, where $R$ represents public coins and $R_A$ and $R_B$ represent the private coins of Alice and Bob respectively.
+    Note that we could have just used public coins, this signature is defined as is just to make it as general as possible.
+
+    The cost of $\Pi$ is 
+    \[ \max_{R,R_A,R_B,x,y} (\text{cost of running } \piprotocol) \]
+
+    Error in the \textit{worst case} is:
+    \[ \max_{x,y} \prob_{R,R_A,R_B} [ \piprotocol \neq f(x,y) ] \]
+
+    Suppose $x$ and $y$ come from a distribution $\distrib$. Error in the \textit{average case} is:
+    \[ \prob_{R,R_A,R_B,x,y} [ \piprotocol \neq f(x,y) ] \]
+

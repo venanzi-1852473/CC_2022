@@ -1,0 +1,25 @@
+\documentclass[a4paper, 10pt]{article}
+
+
+\input{packages.tex}
+\input{settings.tex}
+\input{definitions.tex}
+
+%\makeindex
+
+\begin{document}
+    \maketitle
+
+    \input{abstract.tex}
+
+    {
+        \hypersetup{linkcolor=black}
+        \tableofcontents
+    }
+    \newpage
+    
+%    \input{abstract.tex}
+    \input{content.tex}
+
+    %\printindex
+\end{document}

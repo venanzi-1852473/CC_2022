@@ -1,0 +1,26 @@
+\section{Machines with Oracles}\label{sec:oracles}
+
+\subsection{Introduction}\label{subsec:oracle_intro}
+    An oracle is some function $O : \B^* \rightarrow \B^*$.
+    The purpose of an oracle is to give an answer to some problem.
+
+    Suppose a TM $M$ has access to some oracle $O$.
+    During the computation, $M$ can ask $O$ to solve a problem, to which $O$ will answer in a single step (i.e. in time $O(1)$).
+    We don't know how $O$ works, we just query it and get answers.
+
+    If a TM $M$ has access to an oracle $O$, then we denote it as $M^O$.
+
+    Oracles are "stronger" than reductions, they directly solve a problem for us.
+    So we define classes of problems decidable given a certain oracle. For instance, $P^{SAT}$ is the set of problems decidable in polynomial time, given an oracle for solving $SAT$.
+
+    We can also define classes like $P^{NP}$, where we have access to all oracle for $NP$.
+    Note that having access to all oracles for $NP$ is not more powerful than having access to an oracle for an $NP$-Complete problem.
+
+
+\subsection{$EXPCOM$}\label{subsec:oracle_subsec}
+    \[ EXPCOM = \{ \text{\textlangle} M,x,1^n \text{\textrangle} \st M(x) \text{ outputs } 1 \text{ in } \leq 2^n \text{ steps}\} \]
+
+    $1^n$ is the unary representation of $n$: is it the concatenation of the number $1$ $n$ times.
+
+    How do we prove that $EXP \subseteq P^{EXPCOM}$?
+    From $2^{n^{10}}$ we can build in polytime $\text{\textlangle} M,x,1^{n^{10}} \text{\textrangle}$ and the oracle for $EXPCOM$ to solve it.

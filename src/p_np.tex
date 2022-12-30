@@ -1,0 +1,149 @@
+\section{Introduction to complexity classes}\label{sec:intro_compl_classes}
+
+
+\subsection{Uncomputable functions}\label{subsec:uncomp_funcs}
+    There are functions that can't be computed. They are also said to be \textit{undecidable}.
+
+    \subsubsection{$UC$}\label{subsubsec:uc}
+        Consider the following function:
+        \begin{equation}\label{eq:uc}
+            UC(\alpha) = 
+            \begin{cases}
+                0 & \text{if } M_\alpha(\alpha) = 1 \\
+                1 & \text{otherwise}
+            \end{cases}
+        \end{equation}
+
+        Through \textit{diagonalization} we can prove that $UC$ is uncomputable.
+
+    \subsubsection{$HALT$}\label{subsubsec:halt}
+        \begin{equation}\label{eq:uc}
+            HALT(\alpha, x) = 
+            \begin{cases}
+                1 & \text{if } M_\alpha(x) \text{ terminates in finite steps} \\
+                0 & \text{otherwise}
+            \end{cases}
+        \end{equation}
+
+        We can prove that $HALT$ is uncomputable by \textit{reduction}: if $HALT$ is computable, then we can compute $UC$.
+        For the definition of \textit{polynomial reductions} see \nameref{def:karp_reduction}.
+
+
+\subsection{Time classes}\label{sec:time_classes}
+
+    \begin{definition}[\dtime]\label{def:dtime}
+        Let $f : \B^* \rightarrow \B$ be a function and $T : \mathbb{N} \rightarrow \mathbb{N}$ be a time function.
+        Consider the set $L_f = \{ x \st f(x) = 1 \}$.
+
+        $L \in \dtime[T]$ if there is a TM $M$ s.t.
+        \begin{itemize}
+            \item $M$ runs in time $O(T(n))$
+            \item $M$ decides $L$
+        \end{itemize}
+    \end{definition}
+
+    \subsubsection{\PP}\label{subsubsec:p}
+        \begin{definition}[\PP]\label{def:p}
+            \[ P = \bigcup_{c > 0} \dtime[n^c] \]
+
+            We will consider any set in \PP{} to be efficiently computable.
+        \end{definition}
+
+    \subsubsection{\NP}\label{subsubsec:np}
+        Problems in \NP{} capture the idea of puzzles.
+        Given a puzzle it is hard to solve it, but given a possible solution to the puzzle, it is easy to check if such solution is correct.
+
+        \begin{definition}[\NP]\label{def:np}
+            Let $L$ be a language. $L \in NP$ if there is a machine $V(\cdot, \cdot)$ and a polynomial $p$ s.t.
+            \begin{enumerate}
+                \item $\forall x, y$ $V(x,y)$ runs in time $p(\cardinality{x})$ (\textbf{efficienct})
+                \item $x \in L$, $\exists y$ s.t. $\cardinality{y} \leq p(\cardinality{x})$ and $V(x,y) = 1$ (\textbf{completeness})
+                \item $x \not\in L$, $\forall y$ $V(x,y) = 0$ (\textbf{soundness})
+            \end{enumerate}
+        \end{definition}
+
+        $x$ is an input for an \NP{} problem, and $y$ is a \textbf{witness}\label{witness}, a possible solution to the problem.
+        $V$ is a \textit{verifier machine}, that verifies if $y$ is a \textit{valid witness} for $x$; $V$ runs in polynomial time \wrt $\cardinality{x}$ and can't be fooled (i.e. soundness).
+
+    We know that $P \subseteq NP$: given a \PP{} problem we can just give it a witness, ignore the witness and solve the problem directly in polynomial time.
+
+    \subsubsection{\EXP}\label{subsubsec:exp}
+        \begin{definition}[\EXP]\label{def:exp}
+            \[ EXP = \bigcup_{c > 0} \dtime[2^{n^c}] \]
+        \end{definition}
+
+        It is clear that
+        \[ P \subseteq NP \subseteq EXP \]
+        We also know that $P \subsetneqq EXP$, which means that there are problems strictly not solvable in polytime, and require exponential time.
+
+    
+\subsection{Reductions}\label{sec:reductions}
+
+    Problem $A$ \textbf{reduces} to problem $B$ when: given an efficient algorithm for $B$, we can use it to build an efficient algorithm to solve $A$.
+    
+    We say that $A$ is "easier" than $B$.
+
+    \begin{definition}[Karp reduction]\label{def:karp_reduction}
+        Such reductions are often called just \textit{reduction} or \textit{polytime (computable) reductions}.
+
+        A language $L \subseteq \B^*$ is \textit{polytime (Karp) reducible} to a language $L' \subseteq \B^*$ if there exists a polytime computable function $\starbtob$ s.t.
+        \[ x \in L \Longleftrightarrow f(x) \in L' \]
+
+        So, if $L$ is reducible to $L'$ we write $L \preduction L'$.
+    \end{definition}
+
+
+\subsection{NP-Hardness}\label{subsec:np_hardness}
+    A language $S$ is NP-Hard if $\forall L \in$\NP $L \preduction S$.
+    So an NP-Hard problem is harder than any other problem in \NP.
+
+\subsection{NP-Completeness}\label{subsec:np_completeness}
+    A problem $L$ is \textbf{NP-Complete} if:
+    \begin{itemize}
+        \item $L$ is \NP-Hard
+        \item $L \in$ \NP
+    \end{itemize}
+
+    Some properties:
+    \begin{itemize}
+        \item if $A \preduction B$ and $B \preduction C$, then $A \preduction C$
+        \item if $L$ is \NP-Hard and $L \in P$, then \PP $=$ \NP
+        \item if $L$ is \NP-Complete then $L \in \PP$ iff \PP $=$ \NP
+    \end{itemize}
+
+    \begin{theorem}[Cook-Levin]\label{thm:cook_levin}
+        The following are \NP-Complete problems:
+        \begin{enumerate}
+            \item SAT
+            \item 3-SAT
+            \item Circuit-SAT
+        \end{enumerate}
+    \end{theorem}
+
+
+\subsection{On \NP}\label{subsec:on_np}
+    \NP{} stands for \textbf{Nondeterministic Polynomial}, because a problem in \NP{} follows the computation of a \textbf{NonDeterministic Tugin Machine} (\textbf{NDTM}).
+
+    In a normal TM the computation follows a chain, it is, indeed, deterministic. IN a NDTM computation branches out, in a binary tree fashion; e.g. given $n$ boolean variables, a NDTM, for each variable, tries all possible computations with such variable both set as $0$ as well as 1, so at the end it tried all possible $2^n$ combinations.
+
+    A NDTM $M$ runs in time $T(n)$ if all paths of the computation of $M(x)$, for any input $x$, terminate within time $T(\cardinality{x})$.
+
+    If a language $L$ is decided by a NDTM $M$ in time $T(n)$, then:
+    \begin{itemize}
+        \item $M$ runs in time $T(n)$
+        \item $x \in L$, then there is a path s.t. $M(x) = 1$ (i.e. it accepts)
+        \item $x \not\in L$, then for all paths $M(x) = 0$ (i.e. always rejects)
+    \end{itemize}
+
+
+    \begin{definition}[\ntime]\label{def:ntime}
+        \[ \ntime[T(n)] = \{ L \st L \text{ is decided by NDTM in time } T(n) \} \]
+    \end{definition}
+
+    So we can give the following alternative definition for \NP:
+    \[ \NP = \bigcup_{c > 0} \ntime[n^c] \]
+
+%\subsection{\skipped}
+%\begin{center}
+%    \fbox{I'm skipping, from the notebook, \textit{Boolean Circuits (Anticipation)}}
+%\end{center}

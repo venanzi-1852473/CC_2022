@@ -1,0 +1,193 @@
+\section{Randomness in computation}\label{sec:randomness}
+
+Doing random computation is like having an additional tape such that, instead of being a guess, it contains random bits.
+
+One of the simplest random choices that we can make is, for instance, the following:
+\begin{equation}\label{eq:random_example}
+    x = 
+    \begin{cases}
+        0 & \text{w.p. } \frac{1}{2}\\
+        1 & \text{w.p. } \frac{1}{2}
+    \end{cases}
+\end{equation}
+
+
+\subsection{Prime example}\label{subsec:random_prime}
+
+    We want to decide if a number $N$ is prime.
+    So we want the following decision procedure:
+    \begin{equation}\label{eq:prime_random}
+        Prime(N) = 
+        \begin{cases}
+            1 & \text{if } N \text{ is prime}\\
+            0 & \text{otherwise}
+        \end{cases}
+    \end{equation}
+
+    $Prime(N)$:
+    \begin{itemize}
+        \item if $N = 2$, then return \textit{prime}
+        \item pick $A \inrand \{ 1, \dots, N-1 \}$ ($\inrand$ means "at random")
+        \item if $\gcd(A,N) > 1$, then return \textit{composite}
+        \item if $\left(\frac{N}{A}\right) \neq A^{\frac{N-1}{2}}$, then return \textit{composite}
+        \item return \textit{prime}
+    \end{itemize}
+
+    $\left(\frac{N}{A}\right)$ is the \textit{Jacobi symbol}.
+
+    If $N$ is odd and composite, then $\prob [ \left(\frac{N}{A}\right) \neq A^{\frac{N-1}{2}} \st \gcd(A,N) = 1 ] \geq \frac{1}{2}$.
+
+    If $N$ is prime, then $\prob [ \left(\frac{N}{A}\right) \neq A^{\frac{N-1}{2}} ] = 0$
+
+
+\subsection{One sided error}\label{subsec:rand_one_sided}
+
+    \subsubsection{\textbf{RP}}\label{subsubsec:rp}
+
+        \begin{definition}[RP]\label{def:rp}
+            A language $L$ is in \textbf{RP} if there is a polytime TM $M(\cdot, \cdot)$ and a polynomial $q$ s.t.
+            \begin{itemize}
+                \item if $x \in L$, then $\probrandbit [M(x,r) = 1] \geq \frac{1}{2} $
+                \item if $x \not\in L$, then $\probrandbit [M(x,r) = 0] = 1 $
+            \end{itemize}
+        \end{definition}
+
+    \subsubsection{\textbf{coRP}}\label{subsubsec:corp}
+
+        \begin{definition}[coRP]\label{def:corp}
+            A language $L$ is in \textbf{coRP} if there is a polytime TM $M(\cdot, \cdot)$ and a polynomial $q$ s.t.
+            \begin{itemize}
+                \item if $x \in L$, then $\probrandbit [M(x,r) = 1] = 1 $
+                \item if $x \not\in L$, then $\probrandbit [M(x,r) = 0] \geq \frac{1}{2} $
+            \end{itemize}
+        \end{definition}
+
+
+\subsection{Two sided error}\label{subsec:rand_two_sided}
+
+    \subsubsection{\textbf{BPP}}\label{subsubsec:bpp}
+
+        \begin{definition}[BPP]\label{def:bpp}
+            A language $L$ is in \textbf{BPP} if there is a polytime TM $M(\cdot, \cdot)$ and a polynomial $q$ s.t.
+            \begin{itemize}
+                \item For all $x$ $\probrandbit [M(x,r) = L(x)] \geq \frac{2}{3} $
+            \end{itemize}
+        \end{definition}
+
+        $M(x,r) = L(x)$ means that $M$ correctly recognizes if $x$ is in the language or not.
+
+        What \textbf{BPP} captures is that if a TM accepts a string (i.e. a "yes" instance) then w.p. $\geq \frac{2}{3}$ we are sure that it is correct;
+        instead if a TM rejects (i.e. a "no" instance) then w.p. $\leq \frac{1}{3}$ we are that that it is correct.
+
+
+\subsection{Probability theory}\label{subsec:prob_theory}
+
+        \subsubsection{Chernoff bound}\label{subsubsec:chernoff}
+            Let $X_1, X_2, \dots, X_n$ be i.i.d. variables.
+            Let $\mu = \expected[\sum_i X_i] = \sum_i \expected[X_i]$.
+            \[ \prob [ \cardinality{ \sum_i X_i - \mu } > c \cdot \mu ] < 2 \cdot e^{ -\min (\frac{c^2}{4}, \frac{c}{2}) \cdot \mu } \]
+
+        \subsubsection{Markov Inequality}\label{subsubsec:markov}
+            Let $X \geq 0$ be a random variable.
+            \[ \prob [X \geq c] \leq \frac{\expected[X]}{c} \]
+
+
+\subsection{Zero sided error}\label{subsec:rand_zero_sided}
+
+    \subsubsection{\textbf{ZPP}}\label{subsubsec:zpp}
+
+        We see two equivalent definitions of the class \textbf{ZPP}.
+
+        \begin{definition}[\textbf{ZPP}$_1$]\label{def:zpp1}
+            Let $M$ be a TM.\@
+            \begin{itemize}
+                \item $x \in L$, then $\prob [M(x) = 1] \geq \frac{1}{2}$, with $M(x) \in \{ \text{yes}, \text{no} \}$
+                \item $x \not\in L$, then $\prob [M(x) = 0] \geq \frac{1}{2}$, with $M(x) \in \{ \text{yes}, \text{?} \}$
+            \end{itemize}
+        \end{definition}
+
+        \begin{definition}[\textbf{ZPP}$_2$]\label{def:zpp2}
+            A language $L \in$ \textbf{ZPP}$_2$ if there is a probabilistic TM $M$ that outputs either "yes" or "no"; so $x \in L$ iff $M(x) = \text{yes}$.
+            Let $T(\cardinality{x})$ be the running time of $M(x)$, $\expected[T(\cardinality{x})]$ is polynomial in $\cardinality{x}$.
+        \end{definition}
+
+        In \textbf{ZPP}$_1$ we claim that a TM always runs in polytime, but makes errore and it can says "?" (i.e. "I don't know").
+        In \textbf{ZPP}$_2$ we always get a correct answer and we have an expected running time polynomial in the size of the input, but worst case scenario the running time could be exponential.
+
+
+        \begin{lemma}\label{lemma:zpp1_zpp2}
+            \textbf{ZPP}$_1$ $\rightarrow$ \textbf{ZPP}$_2$
+        \end{lemma}
+
+        \begin{proof}
+            Given a \textbf{ZPP} algorithm, run it multiple times until we get an answer.
+            So, by iterating the algorithm, we can an answer w.p. $1 n^c + \frac{1}{2} n^c + \frac{1}{4} n^c + \dots$.
+
+            $\expected[T(\cardinality{x})] = \sum_{i=0}^{\infty}\frac{n^c}{2^i} = 2 \cdot n^c$
+        \end{proof}
+
+        \begin{lemma}\label{lemma:zpp2_zpp1}
+            \textbf{ZPP}$_2$ $\rightarrow$ \textbf{ZPP}$_1$
+        \end{lemma}
+
+        \begin{proof}
+            Let a \textbf{ZPP} algorithm run for $100 \cdot \expected[T(\cardinality{x})]$ steps.
+
+           By \nameref{subsubsec:markov} $ \prob \left[ T(\cardinality{x}) \geq 100 \cdot \expected[T(\cardinality{x})] \right] \leq \dfrac{\expected[T(\cardinality{x})]}{100 \cdot \expected[T(\cardinality{x})]}  = \frac{1}{100} $
+        \end{proof}
+
+
+        \begin{theorem}[\textbf{ZPP}$_1$ $=$ \textbf{ZPP}$_2$]\label{thm:zpp1_zpp2}
+            Definitions \nameref{def:zpp1} and \nameref{def:zpp2} are equivalent.
+        \end{theorem}
+
+        \begin{proof}
+            The proof is the combination of Lemma \ref{lemma:zpp1_zpp2} and Lemma \ref{lemma:zpp2_zpp1}.
+        \end{proof}
+
+
+        \begin{lemma}\label{lemma:zpp_in_rp}
+            \textbf{ZPP} $\subseteq$ \textbf{RP} $\cap$ \textbf{coRP}
+        \end{lemma}
+
+        \begin{proof}
+            \textbf{ZPP} $\subseteq$ \textbf{RP} and \textbf{ZPP} $\subseteq$ \textbf{coRP} basically by definition.
+        \end{proof}
+
+        \begin{lemma}\label{lemma:rp_in_zpp}
+            \textbf{RP} $\cap$ \textbf{coRP} $\subseteq$ \textbf{ZPP}
+        \end{lemma}
+
+        \begin{proof}
+            Let $M_r$ be a TM for \textbf{RP} and let $M_c$ be a TM for \textbf{coRP}.
+
+            Run both machines on the same input:
+            \begin{itemize}
+                \item if the result is the same for both machines, then output it
+                \item if the results differ, then output "?"
+            \end{itemize}
+        \end{proof}
+
+        \begin{theorem}\label{thm:zpp_rp}
+            \textbf{ZPP} $=$ \textbf{RP} $\cap$ \textbf{coRP}
+        \end{theorem}
+
+        \begin{proof}
+            The proof is the combination of Lemma \ref{lemma:zpp_in_rp} and Lemma \ref{lemma:rp_in_zpp}.
+        \end{proof}
+
+
+\subsection{Polynomial Identity Testing}\label{subsec:pit}
+    In the \textbf{PIT} problem we are asked, given two polynomial $p$ and $q$, to determine whether $p \equiv q$.
+    Or, equivalently, given a polynomial $p$, we want to determine if $p \equiv 0$ (i.e. is the \textit{zero} polynomial).
+
+    \begin{lemma}[Schwartz-Zippel]\label{lemma:schwartz_zippel}
+        Let $p$ be a non-zero polynomial, on $n$ variables, of degree $d$, defined over a field $\mathbb{F}$.
+        Suppose $S \subseteq \mathbb{F}$.
+
+        Pick $a_1, \dots, a_n \inrand S$.
+        %\[ \prob_{a_1, \dots, a_n \inrand S} [p(a_1, \dots, a_n) = 0] \leq \frac{d}{\cardinality{S}} \]
+        \[ \prob [p(a_1, \dots, a_n) = 0] \leq \frac{d}{\cardinality{S}} \]
+    \end{lemma}
+
+    We don't know how to solve \textbf{PIT} in polynomial time, if not by randomizing the algorithm; i.e. we don't know how to derandomize this problem in polytime.

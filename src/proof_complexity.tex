@@ -1,0 +1,118 @@
+\section{Proof complexity}\label{sec:proof_complexity}
+
+The aim of this field is to study the length of proofs.
+
+e.g. We want to prove that a CNF $\varphi$ is SAT.
+The length of the proof is the lengh of an assignment that satisfies $\varphi$.
+
+\begin{definition}[Proof system for UNSAT]\label{def:proof_system}
+    A proof system is a polytime machine $P(\cdot, \cdot)$ with input:
+    \begin{itemize}
+        \item CNF $\varphi$
+        \item candidate proof $\pi \in \B^*$ that $\varphi$ is UNSAT
+    \end{itemize}
+\end{definition}
+
+Let $\varphi$ be a formula:
+\begin{itemize}
+    \item if $\varphi$ is UNSAT, then $\exists \pi$ $P(\varphi, \pi) = 1$
+    \item if $\varphi$ is not UNSAT, then $\forall \pi$ $P(\varphi, \pi) = 0$
+\end{itemize}
+
+
+\subsection{Decision Trees}\label{subsec:proofsys_dt}
+    Decision trees can be used as proof systems.
+    Given a formula $F = \bigwedge_{i=1}^m C_i$, whose variables are $x_1, \dots, x_n$, we can build a DT, querying the variables, and stopping a branch as soon as it falsies any of the clauses.
+    If no branch falsifies $F$, then the DT is a \textit{refutation}; i.e. a proof that $F$ is UNSAT.
+
+    A DT as defined above always exists for any formula.
+
+    Any kind of lower bound of DTs also apply here.
+
+
+\subsection{Resolution}\label{subsec:resolution}
+    Resolution is a deductive proof system.
+
+    Let $F = \bigwedge_{i=1}^m C_i$.
+    
+    \begin{align}
+        \text{(axioms) }        & \dfrac{}{C_i}\\
+        \text{(weakening) }     & \dfrac{A}{A \vee B}\\
+        \text{(resolution) }    & \dfrac{A \vee x \;\; \bar{x} \vee B}{A \vee B}
+    \end{align}
+
+    Some proof are \textbf{Tree}-like, and some proofs are \textbf{DAG}-like.
+    Tree-like refutations are going to be called \textit{TL}-Resolution refutations, while DAG like refutation just refutation in Resolution.
+    That is, we are only going to specify the type of refutation when it's Tree-like.
+
+
+\subsection{Polynomial simulation}\label{subsec:poly_simulation}
+
+    \begin{definition}[p-simulation]\label{def:p_simulation}
+        A proof system $A$ \textbf{p-simulates} a proof system $B$ if every tautology has proofs in $A$ of size at most polynomially larger than in $B$.        
+    \end{definition}
+
+    That is, if $A$ p-simulates $B$, then $A$ is at least as strong as $B$, because it proves tautologies at least as efficiently as $B$.
+
+    \begin{definition}[p-equivalence]\label{def:p_equivalence}
+        Two proof systems $A$ and $B$ are \textit{p-equivalent} is they p-simulate each other; i.e. $A$ p-simulates $B$ and $B$ p-simulates $A$.
+    \end{definition}
+
+
+\subsection{Ordering principle}\label{subsec:order_principle}
+    The \textit{ordering principle} states that a non-empty set of $n$ integers contains a least element.
+    We will denote a formula stating this principle as $OP_n$.
+
+    The variables of a formula $OP_n$ are of the form:
+    \begin{equation}\label{eq:var_ordprinciple}
+        x_{ij} = 
+        \begin{cases}
+            1 & \text{if } "i<j", \forall i,j \in [n] \text{ s.t. } i \neq j \\
+            0 & \text{otherwise}
+        \end{cases}
+    \end{equation}
+
+    The clauses of the formula are going to contain the following disjunctions:
+    \begin{itemize}
+        \item $\bar{x_{ij}} \vee \bar{x_{ji}}$ (no 2-cycles)
+        \item $\bar{x_{ij}} \vee \bar{x_{jk}} \vee x_{ik} \equiv x_{ij} \wedge x_{jk} \rightarrow x_{ik}$, $\forall i,j,k \in [n]$
+        \item $\bigvee_{j \neq i} x_{ji}$, $\forall i \in [n]$
+    \end{itemize}
+
+    Such formulas has:
+    \begin{itemize}
+        \item refutations in resolution of length $n^2$
+        \item TL-refutations in resolution of length $2^n$
+    \end{itemize}
+
+
+\subsection{Pigeonhole principle}\label{subsec:pigeon_principle}
+    \def\php{PHP_{n-1}^n}
+
+    The \textit{pigeonhole principle} states, informally, that if we have $n$ pigeons that fly into $n-1$ holes, then at least one hole has to contain more than one pigeon.
+    We refer to this problem as $\php$.
+
+    The problem can of course be defined in a more general state, saying that there are $m$ pigeons and $n$ holes, with $m > n$.
+    Sometimes it is also stated as the opposite: if we have more holes than pigeons, then some holes will remain empty.
+
+    The "pigeon variables" are defined as follows:
+    \begin{equation}\label{eq:pigeon_vars}
+        p_{ij} = 
+        \begin{cases}
+            1 & \text{if "pigeon } i \text{ flies into hole } j \text{"}\\
+            0 & \text{otherwise}
+        \end{cases}
+    \end{equation}
+    For $i \in [n]$ and $j \in [n-1]$.
+
+    The clauses of a formula stating the principle contain the following disjunctions:
+    \begin{itemize}
+        \item $\bigvee_j p_{ij}$, $\forall i \in [n]$ (pigeon $i$ flies in some hole)
+        \item $\bar{p_{i_1 j}} \vee \bar{p_{i_2 j}}$, $\forall i_1 \neq i_2$ (no collision between pigeon $i_1$ and $i_2$ in hole $j$)
+    \end{itemize}
+
+    Such formula has:
+    \begin{itemize}
+        \item refutations in resolution of length $2^{O(n)}$; actually also $2^{\Omega(n)}$
+        \item TL-refutations in resolution of length $2^{\Omega(n \log n)} \approx n!$
+    \end{itemize}

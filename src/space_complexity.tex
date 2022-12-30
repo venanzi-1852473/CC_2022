@@ -1,0 +1,163 @@
+\section{Space complexity}\label{sec:space}
+
+\subsection{Definitions}\label{subsec:space_def}
+
+    \begin{definition}[Space]\label{def:space}
+        It is the number of locations in the work tapes ever visited during a computations.
+        The input tape is read-only and not counted; i.e. if an algorithm only reads from the input tape then it uses $O(1)$ space.
+    \end{definition}
+
+
+\subsection{Space constructible functions}\label{subsec:space_construct}
+    \begin{definition}[Space constructible function]\label{def:space_constr_func}
+        A function $\spacefunc$ is space constructible if there is a machine that, given input $x$, outputs $s(\cardinality{x})$ in space $s(\cardinality{x})$.
+    \end{definition}
+
+\subsection{Classes}\label{subsec:space_classes}
+
+    \begin{definition}[$SPACE$ class]
+        Given a function $\spacefunc$ and a language $L \subseteq \B^*$, $L \in SPACE[s(n)]$ if
+        $L$ is decided by a TM that uses $O(s(n))$ space on all inputs of length $n$.
+    \end{definition}
+
+    We can also define $NSPACE$ analogously to $SPACE$, except that we consider NDTMs instead of TMs.
+
+    \begin{lemma}
+        \[ \dtime[s(n)] \subseteq SPACE[s(n)] \subseteq NSPACE[s(n)] \subseteq \dtime[2^{O(s(n))}] \]
+    \end{lemma}
+
+    Following the most important classes for space complexity.
+    \[ PSPACE = \bigcup_{c > 1} SPACE[n^c] \]
+    \[ NPSPACE = \bigcup_{c > 1} NSPACE[n^c] \]
+    \[ L =  SPACE[\log n] \]
+    \[ NL = NSPACE[\log n] \]
+
+    Let $A$ and $B$ be two languages s.t. $A \in PSPACE$ and $B \in P$. If $A \in P$, then $A \preduction B$.
+
+
+\subsection{Space Hierarchy Theorem}\label{subsec:space_def}
+    \begin{theorem}[Space Hierarchy Theorem]\label{thm:space_hierarchy}
+        If $f$ and $g$ are \nameref{def:space_constr_func}, and $f(n) = o(g(n))$, then $SPACE[f(n)] \subsetneq SPACE[g(n)]$.
+    \end{theorem}
+
+\subsection{Quantified boolean formulas}\label{subsec:space_quantified_bool_fml}
+    \def\QBF{\textbf{QBF}}
+
+    \begin{definition}[Quantified Boolean Formula]\label{def:qbf}
+        A quantified boolean formula (\QBF) is a boolean formula with the following structure.
+        For each $i$, let $Q_i \in \{ \exists, \forall \}$.
+        \[ Q_1 x_1 Q_2 x_2 \dots Q_n x_n \varphi(\vec{x}) \]
+
+        Such formula contains no free variables.
+    \end{definition}
+
+    Consider the following problem:
+    \[ TBQF = \{ \varphi \st \varphi \text{ is a true \QBF} \} \]
+
+    \begin{theorem}\label{thm:tbqf_pspace_hard}
+        $TBQF$ is PSPACE-Hard.
+    \end{theorem}
+
+    \begin{proof}
+        Let $L \in PSPACE$ be decided by a TM $M$ in space $s(n)$.
+        Given $x \in B^n$, the goal is it build a \QBF{} $\Psi$ of size $O(s^2(n))$, true iff $M$ accepts $x$.
+
+        Consider the graph of configurations $G_{M,x}$; it can be proved that each configuration has polynomial size.
+        We now build the formula $\Psi$ recursively, as follows:
+        \[ \Psi_{i+1}(A,B) = \exists X \forall D_1 \forall D_2 ( (D_1 = A \wedge D_2 = X) \vee (D_1=X \wedge D_2=B) ) \rightarrow \Psi(D_1, D_2) \]
+
+        $\cardinality{\Psi_i} \leq 100 s(n) + \cardinality{\Psi_{i-1}}$. So $\cardinality{\Psi_{s(n)}} = O(s^2(n))$.
+    \end{proof}
+
+    Observe that above proof doesn't require the graph to have out-degree $1$ on vertices, so it actually proves a stronger statement: $TBQF$ is \textbf{NPSPACE}-Hard.
+    So, considering that $TQBF \in PSPACE \subseteq NPSPACE$ and $TBQF$ is \textbf{NPSPACE}-Hard, we get the following.
+
+    \begin{corollary}
+        \textbf{PSPACE} = \textbf{NPSPACE}
+    \end{corollary}
+
+    \begin{theorem}[Savitch]\label{thm:savitch}
+        If $\spacefunc$ is a \nameref{def:space_constr_func} and $s(n) \geq \log n$, then $NSPACE[s(n)] \subseteq SPACE[s^2(n)]$.
+    \end{theorem}
+
+    \begin{proof}
+        Let $L \in NSPACE[s(n)]$ be decided by a NDTM $M$.
+        Consider the configuration graph $G_{M,x}$, for $x \in \B^n$, that has $\leq 2^{O(s(n))}$ vertices.
+
+        We are now going to define a recursive procedure that return "yes" if we can go from a node $u$ to a node $v$ in $\leq 2^i$ steps, for some $i$, and "no" otherwise.
+
+        Consider $Reach(u,v,i) = "u \leadsto v$ in $\leq 2^i$ steps".
+
+        $Reach(u,v,i+1)$:
+        \begin{itemize}
+            \item for $z$ in $V(G_{M,x})$:
+                \begin{itemize}
+                    \item $b = Reach(u,z,i)$
+                    \item if $b=1$ then continue (my notes say $b=0$, but I think it's an error, it's correct $b=1$)
+                    \item $b = Reach(z,v,i)$
+                    \item if $b=1$ then return true
+                \end{itemize}
+            \item return false
+        \end{itemize}
+
+        How much space does step $i$ take?
+        \begin{itemize}
+            \item $R(0) = O(s(n))$
+            \item $R(i+1) = s(n) + R(i)$
+            \item $R(s(n)) = O(s^2(n))$
+        \end{itemize}
+    \end{proof}
+
+
+\subsection{Game on \QBF}\label{subsec:game_qbf}
+
+    Let $F$ be a boolean formula. In a game there are two players:
+    \begin{itemize}
+        \item $\forall$, who tries to make $F$ false
+        \item $\exists$, who tries to make $F$ true
+    \end{itemize}
+
+    Following a description of how a game is played. We iterate on the quantified variables.
+    If the quantifier for the variable is $\forall$ then we ask the $\forall$ players to fix an assignment for that variable; else if the quantifier is an $\exists$ then we ask the $\exists$ player to fix the assignment.
+    If, at the end, $F$ is true, then $\exists$ wins, otherwise $\forall$ wins.
+
+    $F$ is true iff $\exists$ has a winning strategy.
+
+
+\subsection{LogSpace}\label{subsec:log_space}
+
+    \begin{definition}[Logspace reduction]\label{def:logspace_reduction}
+        Let $A$ and $B$ be problems, and let $\starbtob$ be a reduction from $B$ to $C$ s.t. $\cardinality{f(x)} \leq \cardinality{x}^c$.
+
+        We write $B \lreduction C$ if $f$ is logspace computable.
+    \end{definition}
+
+    Some properties:
+    \begin{itemize}
+        \item $A \lreduction B$ and $B \lreduction C$, then $A \lreduction C$
+        \item $A \lreduction B$ and $B \in L$, then $A \in L$
+    \end{itemize}
+
+    \begin{theorem}\label{thm:path_nl_complete}
+        PATH = $ \{ \text{\textlangle} G, s, t \text{\textrangle} \st s \leadsto t \text{ in } G \} $ is \textbf{NL}-Hard w.r.t. $\lreduction$.
+    \end{theorem}
+
+    \begin{proof}
+        Let $A \in NL$ be decided by machine $M$ in space $O(\log n)$.
+        Consider the graph of configuration $G_{M,x}$ where $s$ is the starting state and $t$ is the accepting configuration (this is WLOG, \href{https://people.seas.harvard.edu/~salil/cs221/spring10/lec5.pdf}{reference}).
+        The graph is s.t. we can go from $s$ to $t$ iff $M$ accepts $x$.
+
+        Note also that there are polynomially many vertices.
+
+        Given any two configurations, we can compute in space $O(\log \cardinality{x})$ if they are connected in the graph; in this way we can explore the graph to find out if $s \leadsto t$.
+    \end{proof}
+
+    \begin{theorem}\label{thm:nl_conl}
+        NL $=$ coNL
+    \end{theorem}
+
+    %\begin{proof}
+    %    \begin{center}
+    %        \fbox{TO BE ADDED}
+    %    \end{center}
+    %\end{proof}

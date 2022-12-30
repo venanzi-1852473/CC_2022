@@ -1,0 +1,89 @@
+\section{Interactive proofs}
+
+\subsection{Introduction}\label{subsec:ip_intro}
+    \def\prover{\textbf{P} }
+    \def\verifier{\textbf{V} }
+
+    We have two players:
+    \begin{itemize}
+        \item \textbf{Verifier} (V)
+        \item \textbf{Prover} (P)
+    \end{itemize}
+
+    Given a language $L$ and a string $x$, \prover wants to convince \verifier that $x \in L$.
+
+    \verifier starts by sending a message $q_1$ to \textbf{P}, to which \prover replies with message $a_1$.
+    To keep sending messages $q_i$, $a_i$ for the duration of the whole protocol.
+
+    At the end \verifier either accepts or not.
+    \begin{itemize}
+        \item $x \in L$, there must be a \prover that makes \verifier accept
+        \item $x \not\in L$, \verifier should never accept, regardless of \prover
+    \end{itemize}
+
+    The protocol is polynomial w.r.t. to $\cardinality{x}$:
+    \begin{itemize}
+        \item $\cardinality{x}^{O(1)}$ many messages
+        \item $\forall i$ $\cardinality{q_i}, \cardinality{a_i} \leq \cardinality{x}^{O(1)}$ (i.e. polynomially long messages)
+    \end{itemize}
+
+    \verifier is polynomially bounded; it take polytime w.r.t. $\cardinality{x}$ to:
+    \begin{itemize}
+        \item send any message
+        \item accept/reject
+    \end{itemize}
+
+    The messages sent by \verifier are \textit{randomized}.
+    We can have both \textit{public coin} protocols (i.e. \prover knows how \verifier randomizes messages) or \textit{private coin} protocols.
+
+    \prover is unbounded in time, it can be any function $\starbtob$.
+
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{|c|c|l|}
+        \hline
+        \multicolumn{1}{|l|}{Interaction} & \multicolumn{1}{l|}{Randomness} & Class           \\ \hline
+        X                                 & X                               & \textbf{P}      \\ \hline
+        V                                 & X                               & \textbf{NP}     \\ \hline
+        X                                 & V                               & \textbf{BPP}    \\ \hline
+        V                                 & V                               & \textbf{PSPACE} \\ \hline
+        \end{tabular}
+    \end{table}
+
+
+\def\IP{\textbf{IP}}
+\subsection{\IP}\label{subsec:ip}
+    Given $k : \mathbb{N} \rightarrow \mathbb{N}$, with $k(n) \geq 1$, we define \textbf{IP[$k$]} as the class of problems with a $k$-rounds interactive proof.
+
+    A language $L \in$ \IP[$k$] if there is a probabilistic polynomial time (ppt) \verifier that can have a $k$-rounds interaction with a prover \prover $: \B^* \rightarrow \B^*$.
+    \begin{itemize}
+        \item $x \in L$, $\exists$\prover $\prob[V \text{ accepts}] \geq \frac{2}{3}$
+        \item $x \not\in L$, $\forall$\prover $\prob[V \text{ accepts}] \leq \frac{1}{3}$
+    \end{itemize}
+
+    \begin{definition}[\IP]\label{def:ip}
+        \[ \bm{\IP} = \bigcup_{c \geq 1} \IP[n^c] \]
+    \end{definition}
+
+    \begin{theorem}\label{thm:ip_pspace}
+        \textbf{IP} $=$ \textbf{PSPACE}
+    \end{theorem}
+
+    To show that \textbf{PSPACE} $\subseteq$ \textbf{IP} it is sufficient to show that TQBF $\in$ \textbf{IP} (see \nameref{subsec:space_quantified_bool_fml}).
+
+
+\subsection{Arthur Merlin Protocols}\label{subsec:arthur_merlin}
+    These are particular types of \textbf{IP} protocols where the two parties are called, in literature, Arthur (\textbf{A}) and Merlin (\textbf{M}), respectively \textit{Verifier} and \textit{Prover}.
+    
+    In this kind of protocol we always have \textit{public coin} tosses; that is, \textbf{M} can see \textbf{A}'s coin flips.
+    So \textbf{A} sends randomized messages, but deterministically verifies the interaction.
+
+    Because \textbf{M} can see \textbf{A}'s coins, then \textbf{M} can also predict \textbf{A}'s messages, so it makes sense for \textbf{A} to just send completely random messages, in order to see what \textbf{M} says.
+
+    This kind of protocol is interesting for small numbers of rounds.
+    A few examples are:
+    \begin{itemize}
+        \item \textbf{AM[$2$]} $=$ \textbf{AM}
+        \item \textbf{AM[$2$]} $=$ \textbf{AMA} (\textbf{A} sends another message to probabilistically verify the interaction)
+        \item \textbf{MA} (\textbf{NP} $\subseteq$ \textbf{MA})
+    \end{itemize}

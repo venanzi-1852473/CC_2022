@@ -1,0 +1,49 @@
+\section{coNP}\label{sec:conp}
+
+\subsection{Definition}\label{subsec:conp_def}
+    By definition, \textbf{coNP} is the following set:
+    \[ coNP = \{ L \st \bar{L} \in NP \} \]
+
+    This definition can be deceiving, beacause it might look like that $coNP = \bar{NP}$, but we know that this is not true (i.e. $coNP \neq \bar{NP}$).
+    So we give an alternative definition.
+
+    \begin{definition}[\textbf{coNP}]\label{def:coNP}
+        A language $L$ is in \textbf{coNP} if there is a TM $M(\cdot, \cdot)$ s.t.
+        \begin{enumerate}
+            \item $M(x,y)$ runs in polytime \wrt{} $\cardinality{x}$ ($x$ is the input and $y$ the witness)
+            \item $x \in L$, then for all $y$ $M(x,y) = 1$
+            \item $x \not\in L$, there exists $y$ s.t. $M(x,y) = 0$
+        \end{enumerate}
+    \end{definition}
+
+    Recall the definition of~\nameref{def:np}; the consequences of a string being in a language are swapped for \textbf{NP} and \textbf{coNP}.
+    That is, if a problem is in \textbf{NP} we need a single witness to verify that an instance is in the problem, while in \textbf{coNP} we need that all witnesses verify that an instance is in the problem.
+    The opposite goes for an instance being not in the language.
+
+
+\subsection{Some problems}\label{subsec:conp_problems}
+    Some \textbf{NP} problems:
+    \begin{itemize}
+        \item SAT
+        \item FALSIFIABLE (set of boolean formulas that can be falsified)
+    \end{itemize}
+
+    Some \textbf{coNP} problems (negations of the above \textbf{NP} problems):
+    \begin{itemize}
+        \item UNSAT
+        \item TAUT (tautologies)
+    \end{itemize}
+
+    \begin{claim}
+        TAUT is \textbf{coNP}-Complete.
+    \end{claim}
+
+    \begin{proof}
+        Let $L \in coNP$. We want to prove that $L \preduction TAUT$.
+
+        Surely $\bar{L} \in NP$, so $\bar{L} \preduction SAT$, via some reduction $f$ (that outputs a CNF).
+        \[ x \in \bar{L} \longleftrightarrow f(x) \in SAT \]
+        \[ x \in L \longleftrightarrow f(x) \not\in SAT \]
+        \[ x \in L \longleftrightarrow f(x) \in UNSAT \]
+        \[ x \in L \longleftrightarrow \lnot f(x) \in TAUT \]
+    \end{proof}

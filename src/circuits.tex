@@ -1,0 +1,61 @@
+\section{Circuits}\label{sec:circuits}
+
+A circuit can be seen as a DAG that computes a function.
+Each circuit has a fixed number of \textbf{input gates} (i.e. fixed length input) and can have multiple \textbf{output gates}.
+
+So, in general, we can see a circuit as a function $f : \B^n \rightarrow \B^k$.
+We are intereste in circuits s.t. $k = 1$; circuit solving \textit{decision} problems.
+
+\def\circfamily{\{ C_0, \dots, C_n, \dots \}}
+How do we decide a language $L$?
+In general, $L \subseteq \B^*$, so it can contain words of different length, but a circuit $C$ can only decide $L \cap \B^n$ (i.e. only the words in $L$ of length $n$).
+So we pick a family of circuits $\circfamily$ s.t. for each $i$, $C_i : \B^i \rightarrow \B$.
+Such family decides $L$ iff $\forall n \forall x \in \B^n$ $C_n(x) = L(x)$.
+
+\begin{definition}[Circuit size]\label{def:circ_size}
+    The \textbf{size} of a circuit is the number of gates of the circuit.
+\end{definition}
+
+\begin{definition}\label{def:circ_sn_class}
+    \[ size(s(n)) = \{ L \st \text{there exists a family } \circfamily \text{ that decides } L \text{, and } \cardinality{C_n} \leq s(n) \} \]    
+\end{definition}
+
+
+\begin{definition}[Class \textbf{P/poly}]\label{def:ppoly}
+    \[ P/poly = \bigcup_{k \geq 1} size(n^k) \]
+\end{definition}
+
+\textbf{P/poly} is the class of languages decided by a polysize family of circuits.
+Observe that \textbf{P} $\subseteq$ \textbf{P/poly} and \textbf{NP} $\subseteq$ \textbf{P/poly}.
+
+In a Turing Machine inputs of different length are usually solved in the same way; we have an algorithm that extends the same idea to all input lengths.
+Circuits however are different. Because we need a dedicated circuit for each input length, if we put no constraints in the construction of the circuit family, then each circuit can work entirely differently compared to (all) other circuits in the family.
+Because of this we say that the circuit model is \textbf{non-uniform}.
+
+We can however make a uniform family in the following way.
+
+\begin{definition}\label{def:p_uniform}
+    A circuit family $\circfamily$ is \textbf{P-uniform} if each $C_i$ in the family is built by a TM in polynomial time w.r.t. $i$.
+\end{definition}
+
+\begin{theorem}\label{thm:p_uniform}
+    If a language $L$ is decidable in \textbf{P/poly} via a P-uniform circuit family, then $L \in$\textbf{P}.
+\end{theorem}
+
+\begin{theorem}\label{thm:bpp_ppoly}
+    \textbf{BPP} $\subseteq$ \textbf{P/poly}
+\end{theorem}
+
+\begin{proof}
+    If $L \in$\textbf{BPP}, then there exists a probabilistic TM $M$ s.t. $\prob_r[M(x,r) \neq L(x)] \leq \frac{1}{2^{n+1}}$.
+
+    We can build a matrix where rows represent the possible choices of $x \in \B^n$ and the columns represent the choices of $r \in \B^m$.
+    Each column might contain an error w.p. $\frac{1}{2^{n+1}}$.
+    If we take $m$ large enough (i.e. $m > n$) then there are enough random strings s.t. a column cointains no errors.
+
+    So $\exists \vec{r} \forall x \in \B^n$ $M(\vec{r},x) = L(x)$.
+\end{proof}
+
+%\begin{theorem}[Circuit Hierarchy]\label{thm:circuit_hierarchy}
+%    For all $k$, $size(n)$
+%\end{theorem}

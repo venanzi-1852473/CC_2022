@@ -1,0 +1,70 @@
+\section{Turing Machines} \label{sec:tm}
+
+\begin{definition}[Turing Machine (TM)] \label{def:tm}
+    Let $M = (\Gamma, Q, \delta)$ be a TM:
+    \begin{itemize}
+        \item $\Gamma$ is a finite alphabet
+        \item $Q$ is a finite set of states
+        \item $\delta$ is a transition function
+    \end{itemize}
+\end{definition}
+
+$\Gamma$ often contains:
+\begin{itemize}
+    \item $D$, start of the tape
+    \item $\textvisiblespace$, blank
+    \item $0$ and $1$, or maybe all the integer from $0$ to $9$
+\end{itemize}
+
+$M$ contains $k$ tapes:
+\begin{itemize}
+    \item the first contains the \textit{input} and is \textit{read-only}
+    \item the last contains the \textit{output} at the end of the computation
+    \item the rest are work tapes
+\end{itemize}
+
+What does it mean for a TM to compute a function?\\
+Let $f : \B^* \rightarrow \B^*$ be a function. A TM calculates/computes $f(x) = y$ if it starts with $x$ on the input tape, and, if at some point it halts, than it has $y$ on the output tape.
+
+\begin{definition}[Running time] \label{def:tm_runningtime}
+    Let $\starbtob$ be a function, and let $T : \mathbb{N} \rightarrow \mathbb{N}$ be a time function.
+
+    A TM $M$ computes $f$ in time $T$ if, whenever $M$ has $x$ on its input tape and starts the computation $M(x)$ it stops within $T(\cardinality{x})$ steps, and has $f(x)$ on the output tape.
+\end{definition}
+
+\begin{definition}[Time constructible] \label{def:time_constructible}
+    A function $T : \mathbb{N} \rightarrow \mathbb{N}$ is time constructible if:
+    \begin{itemize}
+        \item $T(n) \geq n$ (not necessary but useful)
+        \item there is a TM $M_T$ s.t. $M_T (x) = \text{"binary encoding of } T(\cardinality{x})"$
+    \end{itemize}
+\end{definition}
+
+\begin{definition}[Oblivious TM] \label{def:oblivious_tm}
+    A TM is oblivious if, given an input $x$, the position of the heads at the $i$-th step only depends on $\cardinality{x}$ and $i$.
+\end{definition}
+
+
+\subsection{TM Encodings} \label{subsec:tm_encodings}
+    Any kind of TM rely on finite resources, thus also the transition function is finite.
+    So any TM can be encoded with a finite binary string.
+
+    Let $M$ be a TM; $M \mapsto X_M \in B^*$, where $X_M$ is the binary encoding of $M$.
+    We can now also read an encoding: we \textit{decode} $\alpha \in \B^*$ and get the TM $M_\alpha$ encoded by $\alpha$.
+    
+    We assume that is always possible to decode an encoding.
+    If a binary string is rubbish, then we can decode it into a trivial TM that, for instance, always rejects.
+
+    Also, any TM can be encoded by infinitely many strings, simply by padding a valid encoding with rubbish bits; similarly to how we can add comments to a program and write infinitely many source codes that compute the same thing.
+
+
+\subsection{Universal TM} \label{subsec:universal_tm}
+    Let $U$ be the universal TM.
+    Given the description of a TM and an input, $U$ can run/simulate the given TM with the given input.
+    That is, $U(\alpha, x)$ runs $M_\alpha (x)$.
+
+    We can also decide to stop the simulation after $t$ steps; in this case we write $U(\alpha, x, t)$.
+
+    Simulating comes with a time loss: from time $T(n)$ to $T(n) \cdot log(T(n))$.
+
+    We can always make a simulation \textit{oblivious}.

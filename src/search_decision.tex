@@ -1,0 +1,26 @@
+\section{Search vs Decision}\label{sec:search_decision}
+
+Consider $\varphi$ a boolean formula.
+
+\begin{equation}\label{eq:decision}
+    Decision(\varphi) := 
+    \begin{cases}
+        SAT \\
+        \lnot SAT
+    \end{cases}
+\end{equation}
+
+\begin{equation}\label{eq:search}
+    Search(\varphi) := 
+    \begin{cases}
+        \alpha  & \text{a SAT assignment of } \varphi\\
+        \perp   & \text{if } \varphi \text{ is UNSAT}
+    \end{cases}
+\end{equation}
+
+Solving Search we can easily also solve Decision. Can we go in the opposite direction?
+We can, but it requires a bit more thought.
+
+Let $\varphi$ have $n$ variables. Starting from $\varphi$ with no variables fixed, we branch out all possible assignments.
+Each time we branch we fix the value of a variable and we ask the Decision procedure if the formula, with the fixed values, is satisfiable.
+In this way we also solve the Search problem.

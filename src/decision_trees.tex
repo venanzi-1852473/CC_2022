@@ -1,0 +1,114 @@
+\section{Decision Trees}\label{sec:dec_tree}
+
+\def\dt{\textbf{DT}}
+\def\sizedt{size^{\dt}}
+
+A decision tree (\dt) computes a function $f : \B^* \rightarrow \B$.
+
+$\sizedt(f) = $ min \# of nodes of a tree that computes $f$
+
+What is really important is the number of queries to the data required to get the result.
+
+\begin{definition}[Tree cost]\label{def:tree_cost}
+    Let $t$ be a tree and $x$ an input for $t$.
+    The cost of $t$ on $x$ is:
+    \[ cost(t,x) = \text{\# bits of } x \text{ examined by } t \]
+\end{definition}
+
+\begin{definition}[Decision tree complexity]\label{def:dt_complexity}
+    Let $f$ by a function.
+    \[ D(f) = \min_t ( \max_x (cost(t,x))) \]
+
+    Where:
+    \begin{itemize}
+        \item $\min$ is over all trees $t$ that compute function $f$
+        \item $\max$ is over all $x \in \B^n$
+    \end{itemize}
+\end{definition}
+
+For any function $f$, $D(f) \leq n$; i.e. at most we need to read all the data.
+
+\begin{definition}[Certificate complexity]\label{def:certificate_compl}
+    Let $f$ be a function.
+    \begin{itemize}
+        \item $C_0(f) =$ \# of bits required to certificate $0$
+        \item $C_1(f) =$ \# of bits required to certificate $1$
+    \end{itemize}
+
+    So the certificate complexity is:
+    \[ C(f) = \max(C_0(f), C_1(f)) \]
+\end{definition}
+
+We know that the above complexity measures are polynomially related in the following way:
+\[ C(f) \leq D(f) \leq C_0(f) C_1(f) \leq C^2(f) \]
+
+
+\subsection{Randomized \dt s}\label{subsec:rand_dt}
+    \def\rdt{\textbf{R}\dt}
+    \def\distrib{\mathcal{D}}
+
+    In a randomized \dt~a (\rdt) node ha finitely many descendants and chooses one at random.
+
+    Let $\distrib$ be a probability distribution over trees that compute a function $f$.
+    \[ cost(\distrib,x) = \expected_{t \in \distrib} cost(t,x) \]
+
+    \begin{definition}[Cost of an \rdt]\label{def:cost_rdt}
+        Let $f$ be a function.
+        \[ R(f) = \min_{\distrib} (\max_x (cost(\distrib, x))) \]
+    \end{definition}
+
+    It is known that:
+    \[ C(f) \leq R(f) \leq D(f) \leq C^2(f) \]
+
+
+\subsection{Lower bounds for \dt s}\label{subsec:dt_lowerbound}
+
+    Given a function $f : \B^n \rightarrow \B$, we consider the following measures to lowerbound the complexity of any \dt~that computes $f$.
+    \begin{itemize}
+        \item \nameref{subsubsec:sensitivity}
+        \item \nameref{subsubsec:block_sensitivity}
+        \item \nameref{subsubsec:degree}
+    \end{itemize}
+
+    \subsubsection{Sensitivity}\label{subsubsec:sensitivity}
+        Given $X = x_1, \dots, x_n$, we define $X^i = x_1, \dots, x_{i-1}, \bar{x_i}, x_{i+1}, \dots, x_n$.
+
+        Let $S \subseteq [n]$, then
+        \begin{equation}\label{eq:sensitivity}
+            X_i^S = 
+            \begin{cases}
+                x_i         & \text{if } i \in S\\
+                \bar{x_i}   & \text{if } i \not\in S
+            \end{cases}
+        \end{equation}
+
+        Given $f$ and $X$ as defined above, the \textbf{sensitivity} of $f$ over $X$ is the number of bits $i$ s.t. $f(X) \neq f(X^i)$.
+
+        \begin{definition}[Sensitivity]\label{def:sensitivity}
+            The sensitivity of a function $f$ is
+            \[ S(f) = \max_x( \text{sensitivity of } f \text{ over } x ) \]
+        \end{definition}
+
+        \[ S(f) \leq D(f) \]
+
+
+    \subsubsection{Block sensitivity}\label{subsubsec:block_sensitivity}
+        It is a generalization of \textit{sensitivity}
+
+        Given a function $f$ and an input $x$, the \textbf{block sensitivity} of $f$ over $x$. denoted as $bs_x(f)$ is the maxmimum number of disjoint blocks $B_1, \dots, B_s \subseteq [n]$ s.t. $\forall i$ $f(x) \neq f(x^{B_i})$.
+
+        \begin{definition}[Block sensitivity]\label{def:block_sensitivity}
+            Let $f$ be a function, the block sensitivity of $f$ is:
+            \[ bs(f) = \max_x( bs_x(f) ) \]
+        \end{definition}
+
+    \subsubsection{Degree}\label{subsubsec:degree}
+
+        \begin{definition}[Degree]\label{def:degree_func}
+            Let $f$ be a function.
+            We can map $f$ into a polynomial $p_f$.
+
+            \[ degree(f) = degree(p_f) \]
+        \end{definition}
+
+        Each function $f : \B^n \rightarrow \mathbb{F}$ can be uniquelt represented as a multilinear polynomial.

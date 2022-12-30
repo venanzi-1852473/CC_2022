@@ -1,0 +1,104 @@
+\section{Time Hierarchy}\label{sec:time_hierarchy}
+
+\subsection{Diagonalization}\label{subsec:diagonalization}
+    It is a powerful technique that can be used to prove lower bounds on TMs.
+    Powerful, albeit not enough to prove $P = NP$.
+
+    Things needed for diagonalization:
+    \begin{itemize}
+        \item representation of TMs as strings (i.e. encodings)
+        \item universal TM that simulates the encoded machine efficiently
+        \item every TM needs to have infinitely many encodings
+        \item every string must represent a TM
+    \end{itemize}
+
+    Encoding wise we can have either:
+    \begin{itemize}
+        \item $x \in \B^* \mapsto M_x$ (i.e. $x$ is the string that encodes a machine)
+        \item $i \in \mathbb{N} \mapsto M_i$ (i.e. we enumerate all TMs and $i$ is the index of some TM)
+    \end{itemize}
+
+    We also might want a timer s.t. we can stop the computation of a TM after $t$ steps.
+
+    \begin{center}
+        \fbox{Note: this subsection doesn't explain at all how Diagonalization works}
+    \end{center}
+
+
+\subsection{Time Hierarchy Theorem}
+
+    \begin{theorem}\label{thm:time_hierarchy_specific}
+        $ \dtime[n] \subsetneq \dtime[n^{1.5}] $
+    \end{theorem}
+
+    \begin{proof}
+        The goal is to build a language that is in $\dtime[n^{1.5}]$ and not in $\dtime[n]$.
+
+        Let $D$ be a machine that diagonalizes. It works as follows.
+
+        $D(x)$:
+        \begin{itemize}
+            \item run $M_x(x)$ for $\cardinality{x}^{1.4}$ steps
+            \item if $M_x(x)$ outputs $b \in \B$
+                \begin{itemize}
+                    \item output $1-b$
+                \end{itemize}
+            \item else
+                \begin{itemize}
+                    \item output $0$
+                \end{itemize}
+        \end{itemize}
+
+        $D$ basically flips the bits on the diagonal, if possible, otherwise it rejcts.
+        It computes a language $L_D : \B^* \rightarrow \B$. The running time of $D$ is $O(n^{1.5})$.
+
+        We want to show that $L_D \not\in \dtime[n]$.
+        We suppose by contradiction that $L_D \in \dtime[n]$.
+
+        So, there is a TM $M$ that computes $L_D$ in time $O(n)$.
+
+        For any $\alpha$ s.t. $M_\alpha = M$, $U(\alpha, x)$ runs in time $c \cdot n \cdot log(n)$.
+        This means that $\exists n_0$ s.t. $\forall n > n_0$ $c \cdot n \cdot log(n) < n^{1.4}$.
+
+        \def\halpha{\hat{\alpha}}
+        Pick $\halpha$ s.t.
+        \begin{itemize}
+            \item $\cardinality{\halpha} > n_0$
+            \item $M_{\halpha} = M$ (my notes say $M_\alpha = M$, but I should check it, I'm not sure)
+        \end{itemize}
+
+        $U(\halpha, \halpha)$ ends within time $\cardinality{\halpha}^{1.4}$.
+
+        So, $D(x)$ can obtain the output of $M(x)$ within $\cardinality{x}^{1.4}$. but by definition of $D$, $D(x) = 1 - M(x) \neq M(x)$. Contradiction!
+        We can't decide $L_D$ in time $O(n)$.
+    \end{proof}
+
+    What this theorem proves, informally, is that if we give a TM more time then it will be able to compute more things.
+    How much more time? In above theorem we've seen that going from $O(n)$ to $O(n^{1.5})$ is enough, but there is a more general version of this theorem.
+
+    \begin{theorem}[General Time Hierarchy Theorem]\label{thm:general_time_hierarchy}
+        If $f$ and $g$ are \nameref{def:time_constructible} functions, and $f(n) \cdot \log f(n) = o(g(n))$, then
+        \[ \dtime[f(n)] \subsetneq \dtime[g(n)] \]
+    \end{theorem}
+
+    \begin{theorem}\label{thm:time_hierarchy_ntime}
+        If $f$ and $g$ are \nameref{def:time_constructible} functions, and $f(n+1) = o(g(n))$, then
+        \[ \ntime[f(n)] \subsetneq \ntime[g(n)] \]
+    \end{theorem}
+
+\subsection{On $P \neq EXP$}\label{subsec:p_vs_exp}
+    How do we prove that some problems have exponential lower bounds?
+    Using the Time Hierarchy Theorem:
+    \[ P \subseteq \dtime[2^{\sqrt{n}}] \subsetneq \dtime[2^{100 \sqrt{n}}] \subseteq \dtime[2^n] \subseteq EXP \]
+
+
+\subsection{\textbf{NP}-Intermediate problems}\label{subsec:ladner}
+    \begin{theorem}[Ladner]\label{thm:ladner}
+        If $P \neq NP$, then there is a language $L$ s.t.
+        \begin{itemize}
+            \item $L \in NP \setminus P$
+            \item $L$ is not $NP$-Complete
+        \end{itemize}
+    \end{theorem}
+
+    These problems are so called \textbf{NP}-Intermediate: harder than $P$, easier than $NP$. They lay somewhere in the middle.
