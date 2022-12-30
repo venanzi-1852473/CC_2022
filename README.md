@@ -1,6 +1,6 @@
 # Computational Complexity (a.y. 2022-23)
 
-This document contains notes taken during the \textit{Computational Complexity} course, held by Massimo Lauria during the academic year 2022-23.
+This document contains notes taken during the *Computational Complexity* course, held by Massimo Lauria during the academic year 2022-23.
 Page of the course at this [link](https://www.massimolauria.net/complexity2022/) (if the link is broken it might be that too much time has passed and the link has been updated for another academic year).
 
 These notes are not meant to be comprehensive, but rather a sort of compendium of the most important definitions and aspects of the course.
